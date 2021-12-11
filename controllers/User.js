@@ -13,13 +13,11 @@ class User {
     static AVATAR_KEY_NAME = 'avatar';
 
     static signup = async (req, res) => {
-        res.render('index', {});
+        return res.render('signup', {data: req.body, layout: 'layouts/blank'});
     }
 
     // login user
     static login = async (req, res) => {
-            // if(req.body) return res.send(req.body)
-            console.log(req.body)
         return res.render('index', {data: req.body, layout: 'layouts/blank'});
         // let { email, password } = req.body;
 

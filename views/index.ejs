@@ -1,7 +1,7 @@
 
 <form id="login-form" class="form" action="/" method="post">
     <h3 class="text-center text-info">Login </h3>
-    <% if (data) { %>
+    <% if (data.username || data.password) { %>
         <p>username: <%= data.username %></p>
         <p>password: <%= data.password %></p>
     <% } %>

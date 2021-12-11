@@ -1,0 +1,40 @@
+
+<form id="login-form" class="form" action="/signup" method="post">
+    <h3 class="text-center text-info">Login </h3>
+    <% if (data.name || data.email || data.password || data.gender || data.dob) { %>
+        <p>name: <%= data.name %></p>
+        <p>email: <%= data.email %></p>
+        <p>password: <%= data.password %></p>
+        <p>gender: <%= data.gender %></p>
+        <p>Date of birth: <%= data.dob %></p>
+    <% } %>
+    <div class="form-group">
+        <label for="Name" class="text-info">Name:</label><br>
+        <input type="text" name="name" id="name" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="Email" class="text-info">Email:</label><br>
+        <input type="text" name="email" id="email" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="Password" class="text-info">Password:</label><br>
+        <input type="password" name="password" id="password" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="Gender" class="text-info">Gender:</label><br>
+        <select name="gender" id="gender" class="form-control">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="DOB" class="text-info">Date of birth:</label><br>
+        <input type="date" name="dob" id="dob">
+    </div>
+    <div class="form-group">
+        <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+    </div>
+    <div id="register-link" class="text-right">
+        <a href="/" class="text-info">Login here</a>
+    </div>
+</form>
