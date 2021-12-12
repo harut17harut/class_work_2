@@ -1,12 +1,8 @@
 
 <form id="login-form" class="form" action="/signup" method="post">
     <h3 class="text-center text-info">Login </h3>
-    <% if (data.name || data.email || data.password || data.gender || data.dob) { %>
-        <p>name: <%= data.name %></p>
-        <p>email: <%= data.email %></p>
-        <p>password: <%= data.password %></p>
-        <p>gender: <%= data.gender %></p>
-        <p>Date of birth: <%= data.dob %></p>
+    <% if(errors.length) { %>
+        <p style="color:red">Error: <%= errors %></p>
     <% } %>
     <div class="form-group">
         <label for="Name" class="text-info">Name:</label><br>
@@ -30,6 +26,10 @@
     <div class="form-group">
         <label for="DOB" class="text-info">Date of birth:</label><br>
         <input type="date" name="dob" id="dob">
+    </div>
+    <div class="form-group">
+        <label for="avatar" class="text-info">Avatar:</label><br>
+        <input type="file" name="avatar" id="avatar">
     </div>
     <div class="form-group">
         <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">

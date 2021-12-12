@@ -1,24 +1,22 @@
 const bcrypt = require('bcrypt');
 // const jwt = require('jsonwebtoken');
-const UserModel = require('../models/user')
-// const { StatusCodes } = require('http-status-codes');
-// const { validationResult } = require('express-validator');
+const UserModel = require('../models/index').User;
+const { StatusCodes } = require('http-status-codes');
+const { validationResult } = require('express-validator');
 // const { UserService } = require('./service');
-// const { Upload } = require('../common/service/upload');
+const { Upload } = require('../common/service/upload');
 const fs = require('fs');
 const path = require('path');
 
 class User {
     static UPLOAD_PATH = 'avatar';
     static AVATAR_KEY_NAME = 'avatar';
-
     static signup = async (req, res) => {
-        return res.render('signup', {data: req.body, layout: 'layouts/blank'});
+        return res.render('signup', {errors:[], data: req.body, layout: 'layouts/blank' });
     }
-
     // login user
     static login = async (req, res) => {
-        return res.render('index', {data: req.body, layout: 'layouts/blank'});
+        return res.render('index', { data: req.body, layout: 'layouts/blank' });
         // let { email, password } = req.body;
 
         // let user = await UserService.getByEmail(email);
@@ -65,55 +63,59 @@ class User {
 
     // Create a new user
     static create = async function (req, res) {
-        // let multerUpload = Upload.uploader(User.AVATAR_KEY_NAME, `${User.UPLOAD_PATH}`)
+        const errors = validationResult(req);
 
-        // multerUpload(req, res, async function (err) {
-        //     if (err) {
-        //         console.log('Multer Error: ', err)
-        //         return;
-        //     }
+            if (!errors.isEmpty()) {
+                console.table(errors.array());
+                return res.status(400).render('signup', { errors: JSON.stringify(errors.array()), layout: 'layouts/blank' });
+            }
 
-        //     const errors = validationResult(req);
+        let multerUpload = Upload.uploader(User.AVATAR_KEY_NAME, `${User.UPLOAD_PATH}`)
 
-        //     if (!errors.isEmpty()) {
-        //         return res.status(400).json({ errors: errors.array() });
-        //     }
+        multerUpload(req, res, async function (err) {
+            if (err) {
+                console.log('Multer Error: ', err)
+                return;
+            }
+            
 
-        //     const passwordHash = bcrypt.hashSync(req.body.password, 5)
-        //     const fileName = req.file ? req.file.originalname : null;
+            const passwordHash = bcrypt.hashSync(req.body.password, 5)
+            const fileName = req.file ? req.file.originalname : null;
 
-        //     try {
-        //         let data = new Promise((resolve, reject) => {
-        //             connection.query('INSERT INTO `users` (`name`, `email`, `password`, `gender`, `dob`, `avatar`) VALUES (?,?,?,?,?,?)',
-        //                 [req.body.name, req.body.email, passwordHash, req.body.gender, req.body.dob, fileName],
-        //                 function (error, results, fields) {
-        //                     if (error) reject(error);
+            try {
+                let data = await UserModel.create({name:req.body.name,email:req.body.email,password:passwordHash,gender:req.body.gender,dob:req.body.dob,avatar:fileName,role_id:1});
+                //console.log(data.name);
+                // new Promise((resolve, reject) => {
 
-        //                     console.table(results);
-        //                     return resolve(results)
-        //                 });
-        //         });
+                //     connection.query('INSERT INTO `users` (`name`, `email`, `password`, `gender`, `dob`, `avatar`) VALUES (?,?,?,?,?,?)',
+                //         [req.body.name, req.body.email, passwordHash, req.body.gender, req.body.dob, fileName],
+                //         function (error, results, fields) {
+                //             if (error) reject(error);
 
-        //         let results = await data;
+                //             console.table(results);
+                //             return resolve(results)
+                //         });
+                // });
 
-        //         if (fileName) {
-        //             const oldPath = path.join(__dirname, `../public/images/${User.UPLOAD_PATH}`);
-        //             const newPath = `${oldPath}/${results.insertId}`;
+                if (fileName) {
+                    const oldPath = path.join(__dirname, `../public/images/${User.UPLOAD_PATH}`);
+                    const newPath = `${oldPath}/${data.insertId}`;
 
-        //             if (!fs.existsSync(newPath)) {
-        //                 fs.mkdirSync(newPath)
-        //             }
+                    if (!fs.existsSync(newPath)) {
+                        fs.mkdirSync(newPath)
+                    }
 
-        //             fs.renameSync(`${oldPath}/${fileName}`, `${newPath}/${fileName}`)
-        //         }
+                    fs.renameSync(`${oldPath}/${fileName}`, `${newPath}/${fileName}`)
+                }
 
-        //         return res.status(201).json({ message: 'success', data: { id: results.insertId } });
-        //     } catch (error) {
-        //         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'error', data: error });
-        //     }
+                return res.status(201).json({ message: 'success', data: { id: data.insertId } });
+            } catch (error) {
+                console.log(error);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'ergror', data: error });
+            }
 
-        //     // console.log(req.files)
-        // });
+            // console.log(req.files)
+        });
     }
 
     // Update user by :id

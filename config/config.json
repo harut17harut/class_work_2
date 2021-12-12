@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
-    "database": "class_work_2",
+    "password": "",
+    "database": "node_task",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
